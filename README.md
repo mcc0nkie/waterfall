@@ -1,4 +1,4 @@
-Sure, here's a simple outline for the library structure and a draft README file:
+# README
 
 File Structure:
 ```
