@@ -15,6 +15,7 @@ def generate_report(df, checks):
     cumulative_drops = 0
     records_remaining = len(df)
 
+    records_remaining_after_previous_checks = len(df)
     for _, description, code in checks:
         # The number of records dropped if only this check was applied.
         records_dropped_if_only_drop = len(df[df[code] == False])
@@ -24,8 +25,11 @@ def generate_report(df, checks):
         cumulative_drops += incremental_drops
 
         # The number of records that would be regained if we removed only this check.
-        regain_if_no_scrub = len(df[df[code] == True]) - records_remaining
+        records_remaining_if_no_scrub = len(df.drop(columns=[code]).dropna())
+        regain_if_no_scrub = records_remaining_if_no_scrub - records_remaining_after_previous_checks
+
         records_remaining -= incremental_drops
+        records_remaining_after_previous_checks = records_remaining
 
         reports.append([code, description, records_dropped_if_only_drop, incremental_drops, cumulative_drops, regain_if_no_scrub, records_remaining])
 
